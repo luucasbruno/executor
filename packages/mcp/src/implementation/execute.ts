@@ -37,6 +37,7 @@ import {
   type FailureSite,
 } from "./diagnostics.ts";
 import { nearest } from "./suggestions.ts";
+import { collectImages } from "./images.ts";
 import { withOperationSpan } from "./telemetry.ts";
 import type { McpAppAccounts } from "../contracts/targets.ts";
 import type { McpBackend } from "../contracts/backend.ts";
@@ -57,6 +58,7 @@ import {
   SearchResult,
   SearchItem,
   searchPageBytes,
+  type McpImage,
   type McpLimits,
   type SearchNamespace,
   type McpToolCall,
@@ -975,7 +977,7 @@ function catalog(
               // The tool's result says it failed, as an MCP server's `isError` does. The program
               // still gets the whole result; the call is reported as a failure.
               if (result.toolError === true) yield* toolReportedError(progress);
-              return result.value;
+              return collectImages(progress.images, result.value);
             }).pipe(Effect.mapError((error) => toolError(diagnostic(error, site("call"))))),
           ),
         );
@@ -1447,6 +1449,8 @@ export type ExecutionProgress = {
    * it when they happen reports them, with its own reporter and trace.
    */
   readonly failures: Array<Error>;
+  /** Images the tools returned, which the completed result delivers as MCP image content. */
+  readonly images: Array<McpImage>;
   /**
    * The trace of the request driving the program, the reference of each failure the program
    * meets. Its driver sets it before the program runs again, so a failure after a resume names
@@ -1460,6 +1464,7 @@ export const executionProgress = (reference: string | undefined): ExecutionProgr
   phase: "discovery",
   unavailableApps: [],
   failures: [],
+  images: [],
   reference,
 });
 const recordFailure = (progress: ExecutionProgress, error: Error) =>

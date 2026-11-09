@@ -290,6 +290,13 @@ export const McpErrorResponse = Schema.Struct({
   reference: Schema.optionalKey(FailureReference),
 });
 export type McpErrorResponse = typeof McpErrorResponse.Type;
+/** An MCP image block a tool returned, as base64. */
+export const McpImage = Schema.Struct({
+  type: Schema.Literal("image"),
+  data: Schema.String,
+  mimeType: Schema.String,
+});
+export type McpImage = typeof McpImage.Type;
 /** Program result plus apps that could not expose a live catalog during this execution. */
 export const ExecuteResult = Schema.Struct({
   execution: Schema.Union([
@@ -304,6 +311,11 @@ export const ExecuteResult = Schema.Struct({
     }),
   ]),
   unavailableApps: Schema.Array(UnavailableApp),
+  /**
+   * Images the tools returned, in the order they returned them. The program and the result see
+   * `{ type: "image", mimeType, imageIndex }` in their place; MCP delivers each as image content.
+   */
+  images: Schema.optionalKey(Schema.Array(McpImage)),
 });
 /** MCP execution may return a live pause; completed program results retain the existing fields. */
 export const ExecutionOutcome = Schema.Union([

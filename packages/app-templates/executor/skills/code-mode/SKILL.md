@@ -191,6 +191,8 @@ help and is considered safe. It does not guarantee success. Correcting input,
 configuration or access may allow a new attempt even when `retryable` is false.
 Never rerun an entire `execute` program merely to retry one failed tool.
 `toolCalls` lists every call in order with its `outcome`.
+An image block a tool returns reaches you as MCP image content; the program and
+the result see `{ type: "image", mimeType, imageIndex }` in its place.
 
 - `ParseError`, `UnsupportedSyntax`: fix the program; `location` points at it.
 - `UnknownTool`: the path is wrong, its app did not load, or the app was

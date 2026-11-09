@@ -630,7 +630,13 @@ export const makeExecutions = (
                   : launch(run, backend, handle).pipe(Effect.as(undefined)),
               ),
               Match.when({ kind: "done" }, ({ result }) =>
-                release(run).pipe(Effect.as({ status: "completed" as const, ...result })),
+                release(run).pipe(
+                  Effect.as({
+                    status: "completed" as const,
+                    ...result,
+                    ...(run.progress.images.length === 0 ? {} : { images: run.progress.images }),
+                  }),
+                ),
               ),
               Match.when({ kind: "wake" }, () => Effect.succeed(undefined)),
               Match.exhaustive,

@@ -30,6 +30,7 @@ import { callTools, describeCatalog, executeProgram, searchCatalog } from "./exe
 import { decodeSkillsInput, skills } from "./skills.ts";
 import { eventsHandler } from "./events.ts";
 import { withOperationSpan } from "./telemetry.ts";
+import { imageToolkit } from "./images.ts";
 
 // Observe the final protocol value after timeout, admission and resume handling.
 const observeExecution =
@@ -202,7 +203,7 @@ export const makeMcp = (options: McpOptions) =>
           describeCatalog(options.backend, input).pipe(withOperationSpan("mcp.describe"));
         const toolkit =
           mode === "native"
-            ? McpServer.toolkit(NativeMcpToolkit).pipe(
+            ? imageToolkit(NativeMcpToolkit).pipe(
                 Layer.provide(
                   NativeMcpToolkit.toLayer({
                     execute: ({ code }) =>
@@ -232,7 +233,7 @@ export const makeMcp = (options: McpOptions) =>
                 ),
               )
             : mode === "browser" && delivery !== undefined
-              ? McpServer.toolkit(BrowserMcpToolkit).pipe(
+              ? imageToolkit(BrowserMcpToolkit).pipe(
                   Layer.provide(
                     BrowserMcpToolkit.toLayer({
                       execute: ({ code }) =>
@@ -288,7 +289,7 @@ export const makeMcp = (options: McpOptions) =>
                     }),
                   ),
                 )
-              : McpServer.toolkit(McpToolkit).pipe(
+              : imageToolkit(McpToolkit).pipe(
                   Layer.provide(
                     McpToolkit.toLayer({
                       execute: ({ code }) =>

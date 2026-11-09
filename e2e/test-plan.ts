@@ -938,6 +938,17 @@ export const scenarios = plan({
       local: na("Hosted version API scenario"),
     },
   },
+  mcpImages: {
+    fixtures: "actors",
+    file: "mcp-images.spec.ts",
+    title:
+      "MCP execute and call deliver images from app tools and wrapped MCP servers as image content",
+    targets: {
+      "self-host": scheduled,
+      cloud: na("Shared MCP path; covered on self-host"),
+      local: na("Hosted version API scenario"),
+    },
+  },
   mcpNestedExecutorResult: {
     fixtures: "actors",
     file: "mcp-direct-calls.spec.ts",

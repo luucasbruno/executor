@@ -90,7 +90,10 @@ model's context.
 A remote MCP tool returns its whole MCP result: `content`, `structuredContent`
 and `isError`. A server that returns `structuredContent` usually repeats it as
 JSON text in `content`; Executor drops that copy, so read `structuredContent`.
-Other content stays as the server sent it. `isError: true` is the tool saying it failed. The call returns
+Other content stays as the server sent it, except images: an image block, from
+a remote MCP tool or any app tool, becomes `{ type: "image", mimeType, imageIndex }`,
+and the `execute` or `call` response carries the image itself as MCP image
+content. `isError: true` is the tool saying it failed. The call returns
 that result instead of throwing, so programs that read `isError` keep working,
 and the result's `toolCalls` lists the call with outcome `failure`. The server
 may still have made changes. `call` lists it the same way. An outcome of
